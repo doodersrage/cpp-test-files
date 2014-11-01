@@ -4,46 +4,51 @@
 #include<iostream>
 #include<string>
 #include"account.h"
-#include"atm.h"
 using namespace std;
 
 int main(){
 	// set vars
 	int mnuOpt = 0;
 	string cName,strBuffer;
-	double usrAmt;
-
-	// assign class objects
-	Account aAccount;
+	double usrAmt = 0;
 
 	// gather initial values
 	cout << "Enter your name: ";
 	getline(cin, cName);
-	aAccount.setCustomerName(cName);
+	cin.clear(); 
 
-	cout << "Enter your initial balance : ";
-	cin >> usrAmt;
-	aAccount.setBalance(usrAmt);
+	while (usrAmt <= 0 || cin.fail()){
+		cout << "Enter your initial balance (positive number please!) : ";
+		cin >> usrAmt;
+		cin.clear(); cin.ignore(10000, '\n');
+	}
 
 	// set initial ATM values
-	ATM aATM(aAccount.getCustomerName(), aAccount.getBalance());
+	Account aAccount(cName, usrAmt);
 
 	while (mnuOpt != 6){
 
+		// reset entry amt
+		usrAmt = 0;
+		mnuOpt = 0;
+
 		// clear console
-		system("CLS");
+		while (mnuOpt <= 0 || cin.fail()){
+			system("CLS");
 
-		// print user menu
-		cout << aATM.getName() << ", what would you like to do today?" << endl;
-		cout << "1. Deposit funds" << endl;
-		cout << "2. Withdraw funds" << endl;
-		cout << "3. Get Balance" << endl;
-		cout << "4. Change name on account" << endl;
-		cout << "5. Get Name on account" << endl;
-		cout << "6. QUIT" << endl;
+			// print user menu
+			cout << aAccount.getCustomerName() << ", what would you like to do today?" << endl;
+			cout << "1. Deposit funds" << endl;
+			cout << "2. Withdraw funds" << endl;
+			cout << "3. Get Balance" << endl;
+			cout << "4. Change name on account" << endl;
+			cout << "5. Get Name on account" << endl;
+			cout << "6. QUIT" << endl;
 
-		// gather user input
-		cin >> mnuOpt;
+			// gather user input
+			cin >> mnuOpt;
+			cin.clear(); cin.ignore(10000, '\n');
+		}
 
 		// clear console
 		system("CLS");
@@ -52,34 +57,41 @@ int main(){
 		switch (mnuOpt){
 		case 1:
 			// deposit funds
-			cout << "What amount would you like to deposit? ";
-			cin >> usrAmt;
-			aATM.credit(usrAmt);
+			while (usrAmt <= 0 || cin.fail()){
+				cout << "What amount would you like to deposit? ";
+				cin >> usrAmt;
+				cin.clear(); cin.ignore(10000, '\n');
+			}
+			aAccount.credit(usrAmt);
 			// update user account balance
-			aAccount.setBalance(aATM.getBalance());
+			aAccount.updateBalance();
 			break;
 			// withdraw funds
 		case 2:
-			cout << "What amount would you like to withdraw from your account? ";
-			cin >> usrAmt;
-			aATM.debit(usrAmt);
+			while (usrAmt <= 0 || cin.fail()){
+				cout << "What amount would you like to withdraw from your account? ";
+				cin >> usrAmt;
+				cin.clear(); cin.ignore(10000, '\n');
+			}
+			aAccount.debit(usrAmt);
 			// update user account balance
-			aAccount.setBalance(aATM.getBalance());
+			aAccount.updateBalance();
 			break;
 			// get user balance
 		case 3:
-			cout << "Available balance: $" << aATM.getBalance() << endl;
+			cout << "Available balance: $" << aAccount.getBalance() << endl;
 			break;
 			// change name on account
 		case 4:
 			cout << "Please enter a new name: ";
 			getline(cin, cName);
+			cin.clear();
 			aAccount.setCustomerName(cName);
-			aATM.setName(aAccount.getCustomerName());
+			cout << "Name on account changed!" << endl;
 			break;
 			// print name on account
 		case 5:
-			cout << "Name on account: " << aATM.getName() << endl;
+			cout << "Name on account: " << aAccount.getCustomerName() << endl;
 			break;
 		case 6:
 			cout << "Thank you for banking with CIS203 bank!!" << endl;
@@ -90,7 +102,7 @@ int main(){
 		}
 
 		cout << "Press enter to continue." << endl;
-		cin.clear(); cin.ignore(INT_MAX,'\n'); 
+		cin.clear(); 
 		cin.get();
 	}
 }
